@@ -1,0 +1,26 @@
+flowchart TD
+    A([Démarrage du Système]) --> B["Chargement du modèle YOLOv5<br/>(Jocher, 2021)"]
+    B --> C[Initialisation de la capture vidéo]
+    C --> D["Ouverture du port série<br/>vers Arduino (Axelson, 2007)"]
+    D --> E{Boucle Principale<br/>Temps Réel}
+
+    E -- "Nouvelle Image" --> F["Capture d'une image<br/>(Bradski, 2000)"]
+    F --> G["Exécution de l'inférence YOLO<br/>Détection des personnes"]
+    G --> H["Analyse des résultats:<br/>- Qui est là?<br/>- Où?<br/>- Combien?"]
+
+    subgraph SG1 [Cartographie de la Présence]
+        H --> I["Pour chaque personne détectée"]
+        I --> J["Calcul de la position (x,y)"]
+        J --> K["Association à la zone la plus proche<br/>(Allen, 1984)"]
+        K --> L["Incrément du compteur de la zone"]
+    end
+
+    L --> I
+    I -- "Toutes les personnes traitées" --> M["Génération de la commande synthétique<br/>ex: 'Z1:1;Z2:0;Z3:2;Z4:0'<br/>(Simon, 1977)"]
+    M --> N{"Port série ouvert &<br/>commande nouvelle?"}
+    N -- Oui --> O["Envoi de la commande vers Arduino<br/>(Consigne murmurée)"]
+    N -- Non --> P["Journalisation d'erreur"]
+    O --> E
+    P --> E
+
+    style E stroke-width:4px
